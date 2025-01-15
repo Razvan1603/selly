@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video on Canvas</title>
+</head>
+<body>
+    <canvas id="canvas" width="1000" height="600"></canvas>
+    <video id="video" src="film2.mp4" controls="controls" loop></video>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const video=document.getElementById("video")
+        var x=820
+                var y=20
+                var dx=9
+                var dy=15
+        video.addEventListener("play",()=>{
+            setInterval(()=>{
+                ctx.clearRect(0,0,1000,600)
+                ctx.drawImage(video,0,0,800,500)
+                ctx.font="20px Arial"
+                ctx.fillStyle="blue"
+                let current=video.currentTime
+                let duration=video.duration
+                let remaining=duration-current
+                ctx.fillText("esti la secunda " + Math.floor(current*10)/10 + " din"+ Math.floor(duration*10)/10,100,530)
+                ctx.beginPath()
+                ctx.ellipse(600,510,10,5,0,0,Math.PI*2)
+                ctx.fill()
+
+                const imageData=ctx.getImageData(0,0,800,500)
+                const pixels=imageData.data
+
+                for(let y=0;y<500;y++){
+                    for(let x=0;x<800;x++){
+                        let index=(y*800+x)*4
+                        red=pixels[index]
+                        green=pixels[index+1]
+                        pixels[index]=green
+                        pixels[index+1]=red
+                    }
+                }
+                for(let y=0;y<500;y++){
+                    for(let x=0;x<800;x+=10){
+                        let index=(y*800+x)*4
+                       
+                        pixels[index]=0
+                        pixels[index+1]=0
+                        pixels[index+2]=255
+                    }
+                }
+                ctx.putImageData(imageData,0,0)
+             
+                ctx.beginPath(820,20)
+
+                ctx.fillStyle="red"
+               
+                ctx.arc(x,y,30,0,Math.PI*2)
+                ctx.fill()
+                x+=dx
+                y+=dy
+                
+             // Verifică coliziunile și schimbă direcția
+             if (x + 30 >= canvas.width || x - 30 <= 0) {
+                    dx *= -1;
+                }
+                if (y + 30 >= canvas.height || y - 30 <= 0) {
+                    dy *= -1;
+                }
+               
+
+
+
+            },30)
+         
+        })
+
+
+    </script>
+</body>
+</html>
